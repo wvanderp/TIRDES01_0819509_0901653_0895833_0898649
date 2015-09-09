@@ -49,6 +49,12 @@ namespace ourGame {
         protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            spriteBatch.Begin();
+
+            spriteBatch.Draw(viper, new Vector2(500, 500), Color.White);
+
+            spriteBatch.End();
+
             base.Draw(gameTime);
         }
     }
