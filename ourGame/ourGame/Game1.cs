@@ -8,9 +8,11 @@ namespace ourGame {
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        private Texture2D viper;
-        Vector2 playerPosition;
+
         private KeyboardState keyboardState;
+        Vector2 playerPosition;
+        
+        private Texture2D viper;
 
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
@@ -50,11 +52,11 @@ namespace ourGame {
             playerPosition += playerDelta * 4.5f;
 
             base.Update(gameTime);
-            }
+        }
 
         protected override void Draw(GameTime gameTime) {
 
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
             spriteBatch.Draw(viper, playerPosition, Color.White);
