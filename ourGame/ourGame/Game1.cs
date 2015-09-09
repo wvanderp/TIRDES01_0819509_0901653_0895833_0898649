@@ -11,6 +11,7 @@ namespace ourGame {
 
         private KeyboardState keyboardState;
         Vector2 playerPosition;
+        Vector2 laserBeamPosition;
 
         private Texture2D viper;
         private Texture2D laserBeam;
@@ -56,19 +57,27 @@ namespace ourGame {
 
             if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S)) {
                 playerDelta -= new Vector2(0.0f, -1.0f);
+                
             }
 
-            playerPosition += playerDelta * 2.5f;   
+            playerPosition += playerDelta * 2.5f;
 
             if (keyboardState.IsKeyDown(Keys.Space)) {
-                //forloop for:
-                //  (current beam position = (current player position +/- offset);    current beam y-axis position < max screen height;     current beam position y-axis + 1 step) {
-                //      spriteBatch.Draw(laserBeam, current beam position, Color.White);
+                //for (laserBeamPosition = (playerPosition + new Vector2(12.0f, 30.0f)); laserBeamPosition.Y < 900.0f; laserBeamPosition =  (laserBeamPosition + new Vector2(0.0f, 1.0f))) {
+                //    System.Diagnostics.Debug.Write("HerpDerp prior to printstuff\n");
+                //    System.Diagnostics.Debug.Write(laserBeamPosition);
+                //    System.Diagnostics.Debug.Write("HerpDerp prior to spritBatch.Begin()\n");
+                //    spriteBatch.Begin();
+                //    System.Diagnostics.Debug.Write("HerpDerp post to spritBatch.Begin()\n");
+                //    spriteBatch.Draw(laserBeam, laserBeamPosition, Color.White);
                 //              offset of current player position: Vector2(12.0f, 30.0f)
                 //      remove something if the beam gets too long (like 6 in a row is fine but when above line creates a 7th, the 1st is removed again)
-                //  }
+                //    System.Diagnostics.Debug.Write("HerpDerp prior to spritBatch.End()\n");
+                //    spriteBatch.End();
+                //    System.Diagnostics.Debug.Write("HerpDerp post to spritBatch.End()\n");
+                //}
             }
-                 
+            //System.Diagnostics.Debug.Print("", playerPosition.X);
 
             base.Update(gameTime);
         }
