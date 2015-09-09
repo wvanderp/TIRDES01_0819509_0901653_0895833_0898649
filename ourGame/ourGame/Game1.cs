@@ -11,8 +11,9 @@ namespace ourGame {
 
         private KeyboardState keyboardState;
         Vector2 playerPosition;
-        
+
         private Texture2D viper;
+        private Texture2D laserBeam;
 
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
@@ -26,7 +27,8 @@ namespace ourGame {
 
         protected override void LoadContent() {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            viper = Content.Load<Texture2D>("ViperMK2.png");
+            viper = Content.Load<Texture2D>("ViperMK2.1s.png");
+            laserBeam = Content.Load<Texture2D>("laserBeam.png");
         }
 
         protected override void UnloadContent() {
@@ -40,16 +42,33 @@ namespace ourGame {
                 Exit();
 
             var playerDelta = Vector2.Zero;
-            if (keyboardState.IsKeyDown(Keys.Left))
+            if (keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A)) {
                 playerDelta -= new Vector2(1.0f, 0.0f);
-            if (keyboardState.IsKeyDown(Keys.Right))
-                playerDelta -= new Vector2(-1.0f, 0.0f);
-            if (keyboardState.IsKeyDown(Keys.Up))
-                playerDelta -= new Vector2(0.0f, 1.0f);
-            if (keyboardState.IsKeyDown(Keys.Down))
-                playerDelta -= new Vector2(0.0f, -1.0f);
+            }
 
-            playerPosition += playerDelta * 4.5f;
+            if (keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D)) {
+                playerDelta -= new Vector2(-1.0f, 0.0f);
+            }
+
+            if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W)) {
+                playerDelta -= new Vector2(0.0f, 1.0f);
+            }
+
+            if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S)) {
+                playerDelta -= new Vector2(0.0f, -1.0f);
+            }
+
+            playerPosition += playerDelta * 2.5f;   
+
+            if (keyboardState.IsKeyDown(Keys.Space)) {
+                //forloop for:
+                //  (current beam position = (current player position +/- offset);    current beam y-axis position < max screen height;     current beam position y-axis + 1 step) {
+                //      spriteBatch.Draw(laserBeam, current beam position, Color.White);
+                //              offset of current player position: Vector2(12.0f, 30.0f)
+                //      remove something if the beam gets too long (like 6 in a row is fine but when above line creates a 7th, the 1st is removed again)
+                //  }
+            }
+                 
 
             base.Update(gameTime);
         }
@@ -60,6 +79,7 @@ namespace ourGame {
 
             spriteBatch.Begin();
             spriteBatch.Draw(viper, playerPosition, Color.White);
+            spriteBatch.Draw(laserBeam, (playerPosition + new Vector2(12.0f, 30.0f)), Color.White);
             spriteBatch.End();
 
             base.Draw(gameTime);
