@@ -15,6 +15,7 @@ namespace ourGame {
 
         private Texture2D viper;
         private Texture2D laserBeam;
+        private Texture2D[] cylonRaider = new Texture2D[14];
 
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
@@ -22,7 +23,7 @@ namespace ourGame {
         }
 
         protected override void Initialize() {
-            playerPosition = new Vector2(250, 250);
+            playerPosition = new Vector2(350, 350);
             base.Initialize();
         }
 
@@ -30,6 +31,9 @@ namespace ourGame {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             viper = Content.Load<Texture2D>("ViperMK2.1s.png");
             laserBeam = Content.Load<Texture2D>("laserBeam.png");
+            for (int i = 0; i < 7; i++) {
+                cylonRaider[i] = Content.Load<Texture2D>("CylonRaider.png");
+            }
         }
 
         protected override void UnloadContent() {
@@ -88,7 +92,11 @@ namespace ourGame {
 
             spriteBatch.Begin();
             spriteBatch.Draw(viper, playerPosition, Color.White);
-            spriteBatch.Draw(laserBeam, (playerPosition + new Vector2(12.0f, 30.0f)), Color.White);
+            //spriteBatch.Draw(laserBeam, (playerPosition + new Vector2(12.0f, 30.0f)), Color.White);
+            for(int i = 0; i < 7; i++) {
+                spriteBatch.Draw(cylonRaider[i], new Vector2((i * 100 + 50), 15), Color.White);
+                spriteBatch.Draw(cylonRaider[i], new Vector2((i * 100 + 50), 150), Color.White);
+            }
             spriteBatch.End();
 
             base.Draw(gameTime);
