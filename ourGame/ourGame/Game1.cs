@@ -26,11 +26,11 @@ namespace ourGame {
 
         protected override void LoadContent() {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            background = Content.Load<Texture2D>("background.jpg");
-            ship = new Ship(Content.Load<Texture2D>("ViperMK2.1s.png"), Content.Load<Texture2D>("engineFlame.png"));
+            background = Content.Load<Texture2D>("background");
+            ship = new Ship(Content.Load<Texture2D>("ViperMK2.1s"), Content.Load<Texture2D>("engineFlame"));
 
             for (int i = 0; i < 7; i++) {
-                cylonRaider[i] = Content.Load<Texture2D>("CylonRaider.png");
+                cylonRaider[i] = Content.Load<Texture2D>("CylonRaider");
             }
         }
 
