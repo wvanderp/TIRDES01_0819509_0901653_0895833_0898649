@@ -7,17 +7,19 @@ namespace ourGame
     class Ship
     {
         Texture2D texture;
-        bool inertiaDampenersEnabled = false;
+        Texture2D engineTexture;
         float heading = 0.0f;
         float speed = 0.0f;
-        Vector2 velocity = new Vector2(0, 0);
         Rectangle position = new Rectangle(300, 200, 50, 75);
         bool spacebarPressed = false;
         float x= 400.0f, y = 350.0f;
-        public Ship(Texture2D texture)
+
+        public Ship(Texture2D texture, Texture2D engineTexture)
         {
             this.texture = texture;
+            this.engineTexture = engineTexture;
         }
+
         public void Update(KeyboardState keyboardState)
         {
             if(keyboardState.IsKeyDown(Keys.Left)) {
@@ -29,40 +31,12 @@ namespace ourGame
                 System.Console.WriteLine("Rotation: {0}", heading - MathHelper.Pi);
             }
             if (keyboardState.IsKeyDown(Keys.Up)) {
-                
-                if (!inertiaDampenersEnabled) {
-                    velocity.X += (float)System.Math.Sin((double)heading) * .3f;
-                    velocity.Y += (float)System.Math.Cos((double)heading) * .3f * -1;
-                } else {
-                    speed += .3f;
-                }
+                speed+= .3f;
             }
             if (keyboardState.IsKeyDown(Keys.Down)) {
-                if (!inertiaDampenersEnabled) {
-                    velocity.X -= (float)System.Math.Sin((double)heading) * .3f;
-                    velocity.Y -= (float)System.Math.Cos((double)heading) * .3f * -1;
-                }
-                else {
-                    speed -= .1f;
-                }
+                speed -= .1f;
             }
-            if (keyboardState.IsKeyDown(Keys.Space)) {
-                if (!spacebarPressed) {
-                    spacebarPressed = true;
-                    if (inertiaDampenersEnabled) {
-                        inertiaDampenersEnabled = false;
-                        velocity.X = (float)System.Math.Sin((double)heading) * speed;
-                        velocity.Y = (float)System.Math.Cos((double)heading) * speed * -1;
-                    }
-                    else {
-                        inertiaDampenersEnabled = true;
-                    }
-                }
-                
-            }
-            if (keyboardState.IsKeyUp(Keys.Space)) {
-                spacebarPressed = false;
-            }
+            
             if (keyboardState.IsKeyDown(Keys.Tab)) {
                 speed = 0.0f;
                 x = 0.0f;
@@ -73,14 +47,9 @@ namespace ourGame
             } else if (heading < 0){
                 heading += MathHelper.Pi * 2;
             }
-            if (inertiaDampenersEnabled) {
-                x += (float)System.Math.Sin((double)heading) * speed;
-                y += (float)System.Math.Cos((double)heading) * speed * -1;
-            }
-            else {
-                x += velocity.X;
-                y += velocity.Y;
-            }
+            x += (float)System.Math.Sin((double)heading) * speed;
+            y += (float)System.Math.Cos((double)heading) * speed * -1;
+            
             position.Y = (int)y;
             position.X = (int)x;            
         }
