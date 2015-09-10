@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace ourGame {
 
@@ -10,9 +11,11 @@ namespace ourGame {
         SpriteBatch spriteBatch;
 
         Ship ship;
+        List<LaserBeam> laserArray = new List<LaserBeam>();
 
         private Texture2D background;
         private Texture2D[] cylonRaider = new Texture2D[14];
+        private Texture2D laserBeamTexture;
 
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
@@ -29,6 +32,7 @@ namespace ourGame {
             background = Content.Load<Texture2D>("background");
             ship = new Ship(Content.Load<Texture2D>("ViperMK2.1s"), Content.Load<Texture2D>("engineFlame"));
 
+            laserBeamTexture = Content.Load<Texture2D>("laserBeam");
             for (int i = 0; i < 7; i++) {
                 cylonRaider[i] = Content.Load<Texture2D>("CylonRaider");
             }
@@ -47,8 +51,17 @@ namespace ourGame {
             ship.Update(keyboardState);
 
             if (keyboardState.IsKeyDown(Keys.Space)) {
-           
+                //TODO: add a new laser
+                laserArray.Add(new LaserBeam(new Vector2(ship.getX() + (ship.getWidth()/2), ship.getY())));
             }
+
+            //game update stuff
+            foreach (var laser in laserArray) {
+                if (laser == null) {
+                    continue;
+                }
+                laser.Update();
+             }
 
             base.Update(gameTime);
         }
@@ -65,6 +78,15 @@ namespace ourGame {
                 spriteBatch.Draw(cylonRaider[i], new Vector2((i * 100 + 50), 15), Color.White);
                 spriteBatch.Draw(cylonRaider[i], new Vector2((i * 100 + 50), 150), Color.White);
             }
+
+            //draw laser beams
+            foreach (var laser in laserArray) {
+                if(laser == null) {
+                    continue;
+                }
+                spriteBatch.Draw(laserBeamTexture, laser.location, Color.White);
+            }
+
             spriteBatch.End();
 
             base.Draw(gameTime);
