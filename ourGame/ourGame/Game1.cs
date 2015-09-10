@@ -18,27 +18,39 @@ namespace ourGame {
         private Texture2D viperTexture;
         private Texture2D laserBeamTexture;
 
+        Ship ship;
+
+        private Texture2D background;
+        private Texture2D[] cylonRaider = new Texture2D[14];
+
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
 
         protected override void Initialize() {
-            playerPosition = new Vector2(250, 250);
+
             base.Initialize();
         }
 
         protected override void LoadContent() {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
             viperTexture = Content.Load<Texture2D>("ViperMK2.1s.png");
             laserBeamTexture = Content.Load<Texture2D>("laserBeam.png");
+
+            background = Content.Load<Texture2D>("background.jpg");
+            ship = new Ship(Content.Load<Texture2D>("ViperMK2.1s.png"));
+
+            for (int i = 0; i < 7; i++) {
+                cylonRaider[i] = Content.Load<Texture2D>("CylonRaider.png");
+            }
         }
 
         protected override void UnloadContent() {
         }
 
         protected override void Update(GameTime gameTime) {
-
 
             //keyboard stuff
         
@@ -47,25 +59,7 @@ namespace ourGame {
             if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
 
-            var playerDelta = Vector2.Zero;
-            if (keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A)) {
-                playerDelta -= new Vector2(1.0f, 0.0f);
-            }
-
-            if (keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D)) {
-                playerDelta -= new Vector2(-1.0f, 0.0f);
-            }
-
-            if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W)) {
-                playerDelta -= new Vector2(0.0f, 1.0f);
-            }
-
-            if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S)) {
-                playerDelta -= new Vector2(0.0f, -1.0f);
-                
-            }
-
-            playerPosition += playerDelta * 2.5f;
+            ship.Update(keyboardState);
 
             if (keyboardState.IsKeyDown(Keys.Space)) {
                 //TODO: add a new laser
@@ -92,10 +86,18 @@ namespace ourGame {
 
             //draw laser beams
             foreach (var laser in laserArray) {
-                if(laser == null) {
+                if (laser == null) {
                     continue;
                 }
                 spriteBatch.Draw(laserBeamTexture, laser.location, Color.White);
+            }
+
+            spriteBatch.Draw(background, new Vector2(-200,-200), Color.White);
+            ship.Draw(spriteBatch);
+
+            for(int i = 0; i < 7; i++) {
+                spriteBatch.Draw(cylonRaider[i], new Vector2((i * 100 + 50), 15), Color.White);
+                spriteBatch.Draw(cylonRaider[i], new Vector2((i * 100 + 50), 150), Color.White);
             }
             spriteBatch.End();
 
