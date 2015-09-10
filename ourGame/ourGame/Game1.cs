@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace ourGame {
 
@@ -11,10 +12,11 @@ namespace ourGame {
 
         private KeyboardState keyboardState;
         Vector2 playerPosition;
-        Vector2 laserBeamPosition;
 
-        private Texture2D viper;
-        private Texture2D laserBeam;
+        List<LaserBeam> laserArray = new List<LaserBeam>();
+
+        private Texture2D viperTexture;
+        private Texture2D laserBeamTexture;
 
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
@@ -28,8 +30,8 @@ namespace ourGame {
 
         protected override void LoadContent() {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            viper = Content.Load<Texture2D>("ViperMK2.1s.png");
-            laserBeam = Content.Load<Texture2D>("laserBeam.png");
+            viperTexture = Content.Load<Texture2D>("ViperMK2.1s.png");
+            laserBeamTexture = Content.Load<Texture2D>("laserBeam.png");
         }
 
         protected override void UnloadContent() {
@@ -37,6 +39,9 @@ namespace ourGame {
 
         protected override void Update(GameTime gameTime) {
 
+
+            //keyboard stuff
+        
             keyboardState = Keyboard.GetState();
 
             if (keyboardState.IsKeyDown(Keys.Escape))
@@ -63,21 +68,17 @@ namespace ourGame {
             playerPosition += playerDelta * 2.5f;
 
             if (keyboardState.IsKeyDown(Keys.Space)) {
-                //for (laserBeamPosition = (playerPosition + new Vector2(12.0f, 30.0f)); laserBeamPosition.Y < 900.0f; laserBeamPosition =  (laserBeamPosition + new Vector2(0.0f, 1.0f))) {
-                //    System.Diagnostics.Debug.Write("HerpDerp prior to printstuff\n");
-                //    System.Diagnostics.Debug.Write(laserBeamPosition);
-                //    System.Diagnostics.Debug.Write("HerpDerp prior to spritBatch.Begin()\n");
-                //    spriteBatch.Begin();
-                //    System.Diagnostics.Debug.Write("HerpDerp post to spritBatch.Begin()\n");
-                //    spriteBatch.Draw(laserBeam, laserBeamPosition, Color.White);
-                //              offset of current player position: Vector2(12.0f, 30.0f)
-                //      remove something if the beam gets too long (like 6 in a row is fine but when above line creates a 7th, the 1st is removed again)
-                //    System.Diagnostics.Debug.Write("HerpDerp prior to spritBatch.End()\n");
-                //    spriteBatch.End();
-                //    System.Diagnostics.Debug.Write("HerpDerp post to spritBatch.End()\n");
-                //}
+                //TODO: add a new laser
+                laserArray.Add(new LaserBeam(new Vector2(playerPosition.X + (viperTexture.Width/2), playerPosition.Y)));
             }
-            //System.Diagnostics.Debug.Print("", playerPosition.X);
+
+            //game update stuff
+            foreach (var laser in laserArray) {
+                if (laser == null) {
+                    continue;
+                }
+                laser.Update();
+            }
 
             base.Update(gameTime);
         }
@@ -87,9 +88,17 @@ namespace ourGame {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-            spriteBatch.Draw(viper, playerPosition, Color.White);
-            spriteBatch.Draw(laserBeam, (playerPosition + new Vector2(12.0f, 30.0f)), Color.White);
+            spriteBatch.Draw(viperTexture, playerPosition, Color.White);
+
+            //draw laser beams
+            foreach (var laser in laserArray) {
+                if(laser == null) {
+                    continue;
+                }
+                spriteBatch.Draw(laserBeamTexture, laser.location, Color.White);
+            }
             spriteBatch.End();
+
 
             base.Draw(gameTime);
         }
