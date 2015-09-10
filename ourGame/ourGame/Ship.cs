@@ -11,7 +11,7 @@ namespace ourGame
         float heading = 0.0f;
         float speed = 0.0f;
         Vector2 velocity = new Vector2(0, 0);
-        Rectangle position = new Rectangle(300, 200, 50, 50);
+        Rectangle position = new Rectangle(300, 200, 50, 75);
         bool spacebarPressed = false;
         float x= 400.0f, y = 350.0f;
         public Ship(Texture2D texture)

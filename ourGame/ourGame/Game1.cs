@@ -11,7 +11,7 @@ namespace ourGame {
 
         Ship ship;
 
-
+        private Texture2D background;
         private Texture2D[] cylonRaider = new Texture2D[14];
 
         public Game1() {
@@ -26,6 +26,7 @@ namespace ourGame {
 
         protected override void LoadContent() {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            background = Content.Load<Texture2D>("background.jpg");
             ship = new Ship(Content.Load<Texture2D>("ViperMK2.1s.png"));
 
             for (int i = 0; i < 7; i++) {
@@ -54,9 +55,10 @@ namespace ourGame {
 
         protected override void Draw(GameTime gameTime) {
 
-            GraphicsDevice.Clear(Content.Load<Texture2D>("ViperMK2.1s.png"););
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
+            spriteBatch.Draw(background, new Vector2(-200,-200), Color.White);
             ship.Draw(spriteBatch);
 
             for(int i = 0; i < 7; i++) {
