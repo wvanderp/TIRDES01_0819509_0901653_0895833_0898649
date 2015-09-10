@@ -54,7 +54,7 @@ namespace ourGame {
 
         protected override void Draw(GameTime gameTime) {
 
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Content.Load<Texture2D>("ViperMK2.1s.png"););
 
             spriteBatch.Begin();
             ship.Draw(spriteBatch);
