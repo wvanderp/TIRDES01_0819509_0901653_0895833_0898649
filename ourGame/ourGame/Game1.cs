@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ourGame {
 
@@ -18,6 +19,9 @@ namespace ourGame {
         private Texture2D[] cylonRaider = new Texture2D[14];
         private Texture2D laserBeamTexture;
         private LaserBeam testBeam;
+
+        private System.TimeSpan last;
+
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -52,9 +56,16 @@ namespace ourGame {
 
             ship.Update(keyboardState);
 
+
             if (keyboardState.IsKeyDown(Keys.Space)) {
                 //TODO: add a new laser
-                laserArray.Add(new LaserBeam(new Vector2((float)ship.getX(), (float)ship.getY()), laserBeamTexture, ship.getHeading()));
+                System.TimeSpan interval = gameTime.TotalGameTime;
+                Debug.WriteLine(gameTime.TotalGameTime.ToString());
+                if (interval > last + new System.TimeSpan(0, 0, 1)) {
+                    laserArray.Add(new LaserBeam(new Vector2(ship.getX() + (ship.getWidth() / 2), ship.getY())));
+                    last = interval;
+                }
+                
             }
 
             //game update stuff
