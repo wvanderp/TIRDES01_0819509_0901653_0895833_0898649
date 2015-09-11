@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 
 namespace ourGame {
@@ -16,7 +17,7 @@ namespace ourGame {
         private Texture2D background;
         private Texture2D[] cylonRaider = new Texture2D[14];
         private Texture2D laserBeamTexture;
-
+        private LaserBeam testBeam;
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -36,6 +37,7 @@ namespace ourGame {
             for (int i = 0; i < 7; i++) {
                 cylonRaider[i] = Content.Load<Texture2D>("CylonRaider");
             }
+            testBeam = new LaserBeam(new Vector2(ship.getX(), ship.getY()), laserBeamTexture);
         }
 
         protected override void UnloadContent() {
@@ -52,14 +54,11 @@ namespace ourGame {
 
             if (keyboardState.IsKeyDown(Keys.Space)) {
                 //TODO: add a new laser
-                laserArray.Add(new LaserBeam(new Vector2(ship.getX() + (ship.getWidth()/2), ship.getY())));
+                laserArray.Add(new LaserBeam(new Vector2((float)ship.getX(), (float)ship.getY()), laserBeamTexture, ship.getHeading()));
             }
 
             //game update stuff
             foreach (var laser in laserArray) {
-                if (laser == null) {
-                    continue;
-                }
                 laser.Update();
              }
 
@@ -78,14 +77,13 @@ namespace ourGame {
                 spriteBatch.Draw(cylonRaider[i], new Vector2((i * 100 + 50), 15), Color.White);
                 spriteBatch.Draw(cylonRaider[i], new Vector2((i * 100 + 50), 150), Color.White);
             }
-
+            
             //draw laser beams
             foreach (var laser in laserArray) {
-                if(laser == null) {
-                    continue;
-                }
                 spriteBatch.Draw(laserBeamTexture, laser.location, Color.White);
             }
+            testBeam.SetHeading(ship.getHeading());
+            testBeam.Draw(spriteBatch);
 
             spriteBatch.End();
 

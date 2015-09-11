@@ -11,7 +11,6 @@ namespace ourGame
         float heading = 0.0f;
         float speed = 0.0f;
         Rectangle position = new Rectangle(300, 200, 50, 75);
-        bool spacebarPressed = false;
         float x= 400.0f, y = 350.0f;
 
         public Ship(Texture2D texture, Texture2D engineTexture)
@@ -80,5 +79,10 @@ namespace ourGame
         public int getHeight() {
             return position.Height;
         }
+
+        public float getHeading() {
+            return heading;
+        }
+
     }
 }
