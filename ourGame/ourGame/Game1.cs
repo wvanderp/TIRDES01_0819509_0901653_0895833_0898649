@@ -17,7 +17,7 @@ namespace ourGame {
         List<LaserBeam> laserArray = new List<LaserBeam>();
 
         private Texture2D background;
-        CylonRaider[] cylonRaiders = new CylonRaider[14];
+        CylonRaider[] cylonRaiders = new CylonRaider[45];
         private Texture2D laserBeamTexture;
         private LaserBeam testBeam;
 
@@ -26,6 +26,10 @@ namespace ourGame {
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            graphics.PreferredBackBufferWidth = 1366;
+            graphics.PreferredBackBufferHeight = 768;
+            graphics.ApplyChanges();
         }
 
         protected override void Initialize() {
@@ -39,9 +43,10 @@ namespace ourGame {
             ship = new Ship(Content.Load<Texture2D>("ViperMK2.1s"), Content.Load<Texture2D>("engineFlame"));
             laserBeamTexture = Content.Load<Texture2D>("laserBeam");
             Texture2D cylonTexture = Content.Load<Texture2D>("CylonRaider");
-            for (int i = 0; i < 7; i++) {
-                cylonRaiders[i] = new CylonRaider(cylonTexture, new Rectangle((i*100 + 50), (25), 50, 75));
-                cylonRaiders[i+7] = new CylonRaider(cylonTexture, new Rectangle((i*100 + 50), (125), 50, 75));
+            for (int i = 0; i < 15; i++) {
+                cylonRaiders[i] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (25), 50, 75));
+                cylonRaiders[i + 15] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (125), 50, 75));
+                cylonRaiders[i + 30] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (225), 50, 75));
             }
             testBeam = new LaserBeam(new Vector2(ship.getX(), ship.getY()), laserBeamTexture);
         }
@@ -85,11 +90,9 @@ namespace ourGame {
             spriteBatch.Begin();
             spriteBatch.Draw(background, new Vector2(-200,-200), Color.White);
             ship.Draw(spriteBatch);
-            
-            for(int i = 0; i < 14; i++) {
+
+            for (int i = 0; i < 45; i++) {
                 cylonRaiders[i].Draw(spriteBatch);
-                //spriteBatch.Draw(cylonRaiders[i], new Vector2((i * 100 + 50), 15), Color.White);
-                //spriteBatch.Draw(cylonRaiders[i], new Vector2((i * 100 + 50), 150), Color.White);
             }
             
             //draw laser beams
