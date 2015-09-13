@@ -11,7 +11,6 @@ namespace ourGame {
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-
         Ship ship;
 
         List<LaserBeam> laserArray = new List<LaserBeam>();
@@ -66,10 +65,10 @@ namespace ourGame {
 
             if (keyboardState.IsKeyDown(Keys.Space)) {
                 //TODO: add a new laser
-                System.TimeSpan interval = gameTime.TotalGameTime;
-                Debug.WriteLine(gameTime.TotalGameTime.ToString());
-                if (interval > last + new System.TimeSpan(0, 0, 1)) {
-                    laserArray.Add(new LaserBeam(new Vector2(ship.getX() + (ship.getWidth() / 2), ship.getY()), laserBeamTexture, 0));
+                TimeSpan interval = gameTime.TotalGameTime;
+                if (interval > last + new TimeSpan(0, 0, 1)) {
+                    laserArray.Add(new LaserBeam(new Vector2(ship.getX() + ((ship.getWidth() / 2) -17.0f), ship.getY()), laserBeamTexture, ship.getHeading()));
+                    laserArray.Add(new LaserBeam(new Vector2(ship.getX() + ((ship.getWidth() / 2) -34.0f), ship.getY()), laserBeamTexture, ship.getHeading()));
                     last = interval;
                 }
                 
@@ -94,10 +93,10 @@ namespace ourGame {
             for (int i = 0; i < 45; i++) {
                 cylonRaiders[i].Draw(spriteBatch);
             }
-            
+
             //draw laser beams
             foreach (var laser in laserArray) {
-                spriteBatch.Draw(laserBeamTexture, laser.location, Color.White);
+                spriteBatch.Draw(laserBeamTexture, laser.location, null, null, new Vector2(0, 0), ship.getHeading(), null, Color.White, new SpriteEffects(), 1.0f);
             }
             testBeam.SetHeading(ship.getHeading());
             testBeam.Draw(spriteBatch);

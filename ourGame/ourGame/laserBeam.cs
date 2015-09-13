@@ -26,5 +26,10 @@ namespace ourGame {
         public void SetHeading(float heading) {
             this.heading = heading;
         }
+
+        public float getHeading()
+        {
+            return heading;
+        }
     }
 }
