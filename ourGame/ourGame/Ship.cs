@@ -11,7 +11,6 @@ namespace ourGame
         float heading = 0.0f;
         float speed = 0.0f;
         Rectangle position = new Rectangle(300, 200, 50, 75);
-        bool spacebarPressed = false;
         float x= 400.0f, y = 350.0f;
 
         public Ship(Texture2D texture, Texture2D engineTexture)
@@ -63,5 +62,27 @@ namespace ourGame
             spriteBatch.Draw(texture, position, sourceRectangle: null, color: Color.White, rotation: heading, origin: new Vector2(texture.Width / 2, texture.Height / 2),effects: SpriteEffects.None, layerDepth: 1.0f);
             // TODO: Add your drawing code here
         }
+
+        //getters + setters
+        public int getX() {
+            return position.X;
+        }
+
+        public int getY() {
+            return position.Y;
+        }
+
+        public int getWidth() {
+            return position.Width;
+        }
+
+        public int getHeight() {
+            return position.Height;
+        }
+
+        public float getHeading() {
+            return heading;
+        }
+
     }
 }
