@@ -10,9 +10,10 @@ namespace ourGame {
         SpriteBatch spriteBatch;
 
         Ship ship;
+        CylonRaider[] cylonRaiders = new CylonRaider[14];
 
         private Texture2D background;
-        private Texture2D[] cylonRaider = new Texture2D[14];
+        
 
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
@@ -28,9 +29,9 @@ namespace ourGame {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             background = Content.Load<Texture2D>("background");
             ship = new Ship(Content.Load<Texture2D>("ViperMK2.1s"), Content.Load<Texture2D>("engineFlame"));
-
-            for (int i = 0; i < 7; i++) {
-                cylonRaider[i] = Content.Load<Texture2D>("CylonRaider");
+            Texture2D cylonTexture = Content.Load<Texture2D>("CylonRaider");
+            for (int i = 0; i < 14; i++) {
+                cylonRaiders[i] = new CylonRaider(cylonTexture);
             }
         }
 
@@ -60,10 +61,10 @@ namespace ourGame {
             spriteBatch.Begin();
             spriteBatch.Draw(background, new Vector2(-200,-200), Color.White);
             ship.Draw(spriteBatch);
-
+            
             for(int i = 0; i < 7; i++) {
-                spriteBatch.Draw(cylonRaider[i], new Vector2((i * 100 + 50), 15), Color.White);
-                spriteBatch.Draw(cylonRaider[i], new Vector2((i * 100 + 50), 150), Color.White);
+                spriteBatch.Draw(cylonRaiders[i], new Vector2((i * 100 + 50), 15), Color.White);
+                spriteBatch.Draw(cylonRaiders[i], new Vector2((i * 100 + 50), 150), Color.White);
             }
             spriteBatch.End();
 
