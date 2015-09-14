@@ -67,8 +67,13 @@ namespace ourGame {
                 //TODO: add a new laser
                 TimeSpan interval = gameTime.TotalGameTime;
                 if (interval > last + new TimeSpan(0, 0, 1)) {
-                    laserArray.Add(new LaserBeam(new Vector2(ship.getX() + ((ship.getWidth() / 2) -17.0f), ship.getY()), laserBeamTexture, ship.getHeading()));
-                    laserArray.Add(new LaserBeam(new Vector2(ship.getX() + ((ship.getWidth() / 2) -34.0f), ship.getY()), laserBeamTexture, ship.getHeading()));
+                    int laser1y = ship.getY() - (int)(Math.Sin((double)ship.getHeading()) * 10);
+                    int laser2y = ship.getY() + (int)(Math.Sin((double)ship.getHeading()) * 10);
+                    int laser1x = ship.getX() - (int)(Math.Cos((double)ship.getHeading()) * 10);
+                    int laser2x = ship.getX() + (int)(Math.Cos((double)ship.getHeading()) * 10);
+                    Console.WriteLine("Lazor 1 y:{0}\nLazor 2 y:{1}", laser1y, laser2y);
+                    laserArray.Add(new LaserBeam(new Vector2(laser1x, laser1y), laserBeamTexture, ship.getHeading()));
+                    laserArray.Add(new LaserBeam(new Vector2(laser2x, laser2y), laserBeamTexture, ship.getHeading()));
                     last = interval;
                 }
                 
@@ -96,10 +101,9 @@ namespace ourGame {
 
             //draw laser beams
             foreach (var laser in laserArray) {
-                spriteBatch.Draw(laserBeamTexture, laser.location, null, null, new Vector2(0, 0), ship.getHeading(), null, Color.White, new SpriteEffects(), 1.0f);
+                spriteBatch.Draw(laserBeamTexture, laser.location, null, null, new Vector2(0, 0), laser.getHeading() - (float)(Math.PI / 2), null, Color.White, new SpriteEffects(), 1.0f);
             }
-            testBeam.SetHeading(ship.getHeading());
-            testBeam.Draw(spriteBatch);
+
 
             spriteBatch.End();
 
