@@ -55,7 +55,7 @@
   <ItemGroup>
     <Content Include="Content\background.jpg" />
     <Content Include="Content\CylonRaider.png" />
-    <Content Include="Content\laserBeam.png" />
+    <Content Include="Content\projectile.png" />
     <Content Include="Content\engineFlame.png" />
     <Content Include="Content\ViperMK2.1s.png" />
     <Content Include="Icon.ico" />

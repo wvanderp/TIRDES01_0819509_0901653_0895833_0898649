@@ -13,14 +13,16 @@ namespace ourGame {
         SpriteBatch spriteBatch;
         Ship ship;
 
-        List<LaserBeam> laserArray = new List<LaserBeam>();
+        List<Projectile> laserArray = new List<Projectile>();
 
         private Texture2D background;
         CylonRaider[] cylonRaiders = new CylonRaider[45];
-        private Texture2D laserBeamTexture;
-        private LaserBeam testBeam;
+        private Texture2D projectileTexture;
+        private Projectile testBeam;
+        private int shotsLeftInBurst = 4;
 
-        private System.TimeSpan last;
+        private TimeSpan lastBurst;
+        private TimeSpan lastShot;
 
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
@@ -40,14 +42,15 @@ namespace ourGame {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             background = Content.Load<Texture2D>("background");
             ship = new Ship(Content.Load<Texture2D>("ViperMK2.1s"), Content.Load<Texture2D>("engineFlame"));
-            laserBeamTexture = Content.Load<Texture2D>("laserBeam");
+            projectileTexture = Content.Load<Texture2D>("projectile");
             Texture2D cylonTexture = Content.Load<Texture2D>("CylonRaider");
             for (int i = 0; i < 15; i++) {
                 cylonRaiders[i] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (25), 50, 75));
                 cylonRaiders[i + 15] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (125), 50, 75));
                 cylonRaiders[i + 30] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (225), 50, 75));
             }
-            testBeam = new LaserBeam(new Vector2(ship.getX(), ship.getY()), laserBeamTexture);
+            testBeam = new Projectile(new Vector2(ship.getX(), ship.getY()), projectileTexture);
+
         }
 
         protected override void UnloadContent() {
@@ -66,17 +69,23 @@ namespace ourGame {
             if (keyboardState.IsKeyDown(Keys.Space)) {
                 //TODO: add a new laser
                 TimeSpan interval = gameTime.TotalGameTime;
-                if (interval > last + new TimeSpan(0, 0, 0, 0, 250)) {
-                    int laser1y = ship.getY() - (int)(Math.Sin((double)ship.getHeading()) * 10);
-                    int laser2y = ship.getY() + (int)(Math.Sin((double)ship.getHeading()) * 10);
-                    int laser1x = ship.getX() - (int)(Math.Cos((double)ship.getHeading()) * 10);
-                    int laser2x = ship.getX() + (int)(Math.Cos((double)ship.getHeading()) * 10);
-                    Console.WriteLine("Lazor 1 y:{0}\nLazor 2 y:{1}", laser1y, laser2y);
-                    laserArray.Add(new LaserBeam(new Vector2(laser1x, laser1y), laserBeamTexture, ship.getHeading()));
-                    laserArray.Add(new LaserBeam(new Vector2(laser2x, laser2y), laserBeamTexture, ship.getHeading()));
-                    last = interval;
+                if (interval > lastShot + new TimeSpan(0, 0, 0, 0, 100 )) {
+                    if (shotsLeftInBurst-- > 0) {
+                        int laser1y = ship.getY() - (int)(Math.Sin((double)ship.getHeading()) * 10);
+                        int laser2y = ship.getY() + (int)(Math.Sin((double)ship.getHeading()) * 10);
+                        int laser1x = ship.getX() - (int)(Math.Cos((double)ship.getHeading()) * 10);
+                        int laser2x = ship.getX() + (int)(Math.Cos((double)ship.getHeading()) * 10);
+                        Console.WriteLine("Lazor 1 y:{0}\nLazor 2 y:{1}", laser1y, laser2y);
+                        laserArray.Add(new Projectile(new Vector2(laser1x, laser1y), projectileTexture, ship.getHeading()));
+                        laserArray.Add(new Projectile(new Vector2(laser2x, laser2y), projectileTexture, ship.getHeading()));
+                        lastShot = interval;
+                        lastBurst = interval;
+                    }
                 }
-                
+                if (interval > lastBurst + new TimeSpan(0, 0, 1)) {
+                    shotsLeftInBurst = 4;
+                    lastBurst = interval;
+                }
             }
 
             //game update stuff
@@ -93,15 +102,15 @@ namespace ourGame {
 
             spriteBatch.Begin();
             spriteBatch.Draw(background, new Vector2(-200,-200), Color.White);
-            ship.Draw(spriteBatch);
 
             for (int i = 0; i < 45; i++) {
                 cylonRaiders[i].Draw(spriteBatch);
             }
+            ship.Draw(spriteBatch);
 
             //draw laser beams
             foreach (var laser in laserArray) {
-                spriteBatch.Draw(laserBeamTexture, laser.location, null, null, new Vector2(0, 0), laser.getHeading() - (float)(Math.PI / 2), null, Color.White, new SpriteEffects(), 1.0f);
+                laser.Draw(spriteBatch);
             }
 
 
