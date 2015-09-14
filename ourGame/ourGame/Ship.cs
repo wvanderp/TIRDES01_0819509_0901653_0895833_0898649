@@ -18,12 +18,12 @@ namespace ourGame {
 
         public void Update(KeyboardState keyboardState) {
             if (keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A)) {
-                heading -= 3.0f / 60;
+                heading -= MathHelper.Pi / 60;
                 System.Console.WriteLine("Rotation: {0}", heading - MathHelper.Pi);
             }
 
             if (keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D)) {
-                heading += 3.0f / 60;
+                heading += MathHelper.Pi / 60;
                 System.Console.WriteLine("Rotation: {0}", heading - MathHelper.Pi);
             }
 

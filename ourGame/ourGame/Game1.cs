@@ -66,7 +66,7 @@ namespace ourGame {
             if (keyboardState.IsKeyDown(Keys.Space)) {
                 //TODO: add a new laser
                 TimeSpan interval = gameTime.TotalGameTime;
-                if (interval > last + new TimeSpan(0, 0, 1)) {
+                if (interval > last + new TimeSpan(0, 0, 0, 0, 250)) {
                     int laser1y = ship.getY() - (int)(Math.Sin((double)ship.getHeading()) * 10);
                     int laser2y = ship.getY() + (int)(Math.Sin((double)ship.getHeading()) * 10);
                     int laser1x = ship.getX() - (int)(Math.Cos((double)ship.getHeading()) * 10);
