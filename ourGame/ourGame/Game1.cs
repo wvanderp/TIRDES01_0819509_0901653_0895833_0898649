@@ -13,11 +13,12 @@ namespace ourGame {
         SpriteBatch spriteBatch;
         Ship ship;
 
+        private Texture2D background;
+        private Texture2D projectileTexture;
+
         List<Projectile> laserArray = new List<Projectile>();
 
-        private Texture2D background;
         CylonRaider[] cylonRaiders = new CylonRaider[45];
-        private Texture2D projectileTexture;
         private Projectile testBeam;
         private int shotsLeftInBurst = 4;
 
@@ -62,9 +63,6 @@ namespace ourGame {
             if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
 
-            ship.Update(keyboardState);
-
-
             if (keyboardState.IsKeyDown(Keys.Space)) {
                 //TODO: add a new laser
                 TimeSpan interval = gameTime.TotalGameTime;
@@ -95,6 +93,8 @@ namespace ourGame {
             foreach (CylonRaider raider in cylonRaiders) {
                 raider.Update(ship.Position);
             }
+
+            ship.Update(keyboardState);
 
             base.Update(gameTime);
         }
