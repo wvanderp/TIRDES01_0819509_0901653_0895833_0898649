@@ -10,7 +10,7 @@ namespace ourGame {
         float speed = 0.0f;
         Rectangle position = new Rectangle(300, 200, 50, 75);
         float x= 400.0f, y = 350.0f;
-
+        float cannonSpeed = 10.0f;
         public Ship(Texture2D texture, Texture2D engineTexture) {
             this.texture = texture;
             this.engineTexture = engineTexture;
@@ -86,5 +86,14 @@ namespace ourGame {
             return heading;
         }
 
+        public float getProjectileSpeed()
+        {
+            return speed + cannonSpeed;
+        }
+
+        public Rectangle Position
+        {
+            get { return position; }
+        }
     }
 }

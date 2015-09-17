@@ -9,10 +9,11 @@ namespace ourGame {
         public float speed = 10f;
         Texture2D laserBeamTexture; 
 
-        public Projectile(Vector2 location, Texture2D laserBeamTexture, float heading=0f) {
+        public Projectile(Vector2 location, Texture2D laserBeamTexture, float heading=0f, float speed=10f) {
             this.location = location;
             this.heading = heading - (float)(Math.PI / 2);
             this.laserBeamTexture = laserBeamTexture;
+            this.speed = speed;
         }
         
         public void Update() {

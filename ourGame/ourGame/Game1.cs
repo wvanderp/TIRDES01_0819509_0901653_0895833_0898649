@@ -49,7 +49,6 @@ namespace ourGame {
                 cylonRaiders[i + 15] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (125), 50, 75));
                 cylonRaiders[i + 30] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (225), 50, 75));
             }
-            testBeam = new Projectile(new Vector2(ship.getX(), ship.getY()), projectileTexture);
 
         }
 
@@ -76,8 +75,8 @@ namespace ourGame {
                         int laser1x = ship.getX() - (int)(Math.Cos((double)ship.getHeading()) * 10);
                         int laser2x = ship.getX() + (int)(Math.Cos((double)ship.getHeading()) * 10);
                         Console.WriteLine("Lazor 1 y:{0}\nLazor 2 y:{1}", laser1y, laser2y);
-                        laserArray.Add(new Projectile(new Vector2(laser1x, laser1y), projectileTexture, ship.getHeading()));
-                        laserArray.Add(new Projectile(new Vector2(laser2x, laser2y), projectileTexture, ship.getHeading()));
+                        laserArray.Add(new Projectile(new Vector2(laser1x, laser1y), projectileTexture, ship.getHeading(), ship.getProjectileSpeed()));
+                        laserArray.Add(new Projectile(new Vector2(laser2x, laser2y), projectileTexture, ship.getHeading(), ship.getProjectileSpeed()));
                         lastShot = interval;
                         lastBurst = interval;
                     }
@@ -92,6 +91,10 @@ namespace ourGame {
             foreach (var laser in laserArray) {
                 laser.Update();
              }
+
+            foreach (CylonRaider raider in cylonRaiders) {
+                raider.Update(ship.Position);
+            }
 
             base.Update(gameTime);
         }
