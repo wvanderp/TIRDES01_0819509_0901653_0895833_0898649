@@ -13,17 +13,23 @@ namespace ourGame {
         SpriteBatch spriteBatch;
         Ship ship;
 
+        private Texture2D cylonTexture;
         private Texture2D background;
         private Texture2D projectileTexture;
 
         List<Projectile> laserArray = new List<Projectile>();
 
-        CylonRaider[] cylonRaiders = new CylonRaider[45];
+        List<CylonRaider> cylonRaiders = new List<CylonRaider>();
         private Projectile testBeam;
         private int shotsLeftInBurst = 4;
 
         private TimeSpan lastBurst;
         private TimeSpan lastShot;
+
+        private int programCounter = 0;
+        private int initForLoopVM;
+        private float firstDelay;
+        private Random random = new Random();
 
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
@@ -44,12 +50,15 @@ namespace ourGame {
             background = Content.Load<Texture2D>("background");
             ship = new Ship(Content.Load<Texture2D>("ViperMK2.1s"), Content.Load<Texture2D>("engineFlame"));
             projectileTexture = Content.Load<Texture2D>("projectile");
-            Texture2D cylonTexture = Content.Load<Texture2D>("CylonRaider");
+            cylonTexture = Content.Load<Texture2D>("CylonRaider");
+            
+            /*
             for (int i = 0; i < 15; i++) {
                 cylonRaiders[i] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (25), 50, 75));
                 cylonRaiders[i + 15] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (125), 50, 75));
                 cylonRaiders[i + 30] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (225), 50, 75));
             }
+            /**/
 
         }
 
@@ -59,6 +68,7 @@ namespace ourGame {
         protected override void Update(GameTime gameTime) {
 
             KeyboardState keyboardState = Keyboard.GetState();
+            float deltaTime = (float)gameTime.TotalGameTime.TotalSeconds;
 
             if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
@@ -66,7 +76,7 @@ namespace ourGame {
             if (keyboardState.IsKeyDown(Keys.Space)) {
                 //TODO: add a new laser
                 TimeSpan interval = gameTime.TotalGameTime;
-                if (interval > lastShot + new TimeSpan(0, 0, 0, 0, 100 )) {
+                if (interval > lastShot + new TimeSpan(0, 0, 0, 0, 100)) {
                     if (shotsLeftInBurst-- > 0) {
                         int laser1y = ship.getY() - (int)(Math.Sin((double)ship.getHeading()) * 10);
                         int laser2y = ship.getY() + (int)(Math.Sin((double)ship.getHeading()) * 10);
@@ -85,17 +95,54 @@ namespace ourGame {
                 }
             }
 
-            //game update stuff
             foreach (var laser in laserArray) {
                 laser.Update();
-             }
-
-            foreach (CylonRaider raider in cylonRaiders) {
-                raider.Update(ship.Position);
             }
 
             ship.Update(keyboardState);
 
+    
+            foreach (CylonRaider raider in cylonRaiders)
+            {
+                raider.Update(ship.Position);
+            }
+
+            switch (programCounter)
+                {
+                    case 0:
+                        if (true)
+                        {
+                            programCounter = 1;
+                            initForLoopVM = 0;
+                        }
+                        break;
+
+                    case 1:
+                        if(initForLoopVM <= 5)
+                        {
+                        //create cylon raider
+                        cylonRaiders.Add(new CylonRaider(cylonTexture, new Rectangle(random.Next(10, 1300), random.Next(25, 30), 50, 75)));
+                        initForLoopVM++;
+                        }
+                        else
+                        {
+                            programCounter = 2;
+                            firstDelay = (float)(random.NextDouble() * 500.0 + 1000.0);
+                        }
+                        break;
+                    case 2:
+                        firstDelay -= deltaTime;
+                        if (firstDelay > 0.0f)
+                        {
+                            programCounter = 2;
+                        }
+                        else
+                        {
+                            programCounter = 0;
+                        }
+                        break;
+                }
+            /**/
             base.Update(gameTime);
         }
 
@@ -105,10 +152,13 @@ namespace ourGame {
 
             spriteBatch.Begin();
             spriteBatch.Draw(background, new Vector2(-200,-200), Color.White);
-
-            for (int i = 0; i < 45; i++) {
-                cylonRaiders[i].Draw(spriteBatch);
+            
+            
+            foreach (CylonRaider raider in cylonRaiders) {
+                raider.Draw(spriteBatch);
             }
+            /**/
+
             ship.Draw(spriteBatch);
 
             //draw laser beams
