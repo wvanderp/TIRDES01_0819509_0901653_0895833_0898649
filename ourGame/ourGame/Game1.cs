@@ -27,14 +27,13 @@ namespace ourGame {
         private TimeSpan lastShot;
 
         private int programCounter = 0;
-        private int initForLoopVM;
+        private int initForLoopVM, amount;
         private float firstDelay;
         private Random random = new Random();
 
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-
             graphics.PreferredBackBufferWidth = 1366;
             graphics.PreferredBackBufferHeight = 768;
             graphics.ApplyChanges();
@@ -51,15 +50,6 @@ namespace ourGame {
             ship = new Ship(Content.Load<Texture2D>("ViperMK2.1s"), Content.Load<Texture2D>("engineFlame"));
             projectileTexture = Content.Load<Texture2D>("projectile");
             cylonTexture = Content.Load<Texture2D>("CylonRaider");
-            
-            /*
-            for (int i = 0; i < 15; i++) {
-                cylonRaiders[i] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (25), 50, 75));
-                cylonRaiders[i + 15] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (125), 50, 75));
-                cylonRaiders[i + 30] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (225), 50, 75));
-            }
-            /**/
-
         }
 
         protected override void UnloadContent() {
@@ -74,7 +64,6 @@ namespace ourGame {
                 Exit();
 
             if (keyboardState.IsKeyDown(Keys.Space)) {
-                //TODO: add a new laser
                 TimeSpan interval = gameTime.TotalGameTime;
                 if (interval > lastShot + new TimeSpan(0, 0, 0, 0, 100)) {
                     if (shotsLeftInBurst-- > 0) {
@@ -114,20 +103,20 @@ namespace ourGame {
                         {
                             programCounter = 1;
                             initForLoopVM = 0;
+                            amount = random.Next(3, 9);
                         }
                         break;
 
                     case 1:
-                        if(initForLoopVM <= 5)
+                        if(initForLoopVM < amount)
                         {
-                        //create cylon raider
                         cylonRaiders.Add(new CylonRaider(cylonTexture, new Rectangle(random.Next(10, 1300), random.Next(25, 30), 50, 75)));
                         initForLoopVM++;
                         }
                         else
                         {
                             programCounter = 2;
-                            firstDelay = (float)(random.NextDouble() * 500.0 + 1000.0);
+                            firstDelay = (float)(random.NextDouble() * 725.0 + 1500.0);
                         }
                         break;
                     case 2:
@@ -142,30 +131,24 @@ namespace ourGame {
                         }
                         break;
                 }
-            /**/
+            
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime) {
 
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
             spriteBatch.Begin();
             spriteBatch.Draw(background, new Vector2(-200,-200), Color.White);
-            
             
             foreach (CylonRaider raider in cylonRaiders) {
                 raider.Draw(spriteBatch);
             }
-            /**/
 
             ship.Draw(spriteBatch);
 
-            //draw laser beams
             foreach (var laser in laserArray) {
                 laser.Draw(spriteBatch);
             }
-
 
             spriteBatch.End();
 
