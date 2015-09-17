@@ -20,7 +20,6 @@ namespace ourGame {
         List<Projectile> laserArray = new List<Projectile>();
 
         List<CylonRaider> cylonRaiders = new List<CylonRaider>();
-        private Projectile testBeam;
         private int shotsLeftInBurst = 4;
 
         private TimeSpan lastBurst;
@@ -28,7 +27,7 @@ namespace ourGame {
 
         private int programCounter = 0;
         private int initForLoopVM, amount;
-        private float firstDelay;
+        private float firstDelay, secondDelay;
         private Random random = new Random();
 
         public Game1() {
@@ -96,41 +95,64 @@ namespace ourGame {
                 raider.Update(ship.Position);
             }
 
+            //This block should always come last!
             switch (programCounter)
-                {
-                    case 0:
-                        if (true)
-                        {
-                            programCounter = 1;
-                            initForLoopVM = 0;
-                            amount = random.Next(3, 9);
-                        }
-                        break;
+            {
+                case 0:
+                    if (true)
+                    {
+                        programCounter = 1;
+                        initForLoopVM = 0;
+                        amount = random.Next(3, 9);
+                    }
+                    break;
 
-                    case 1:
-                        if(initForLoopVM < amount)
-                        {
-                        cylonRaiders.Add(new CylonRaider(cylonTexture, new Rectangle(random.Next(10, 1300), random.Next(25, 30), 50, 75)));
-                        initForLoopVM++;
-                        }
-                        else
-                        {
-                            programCounter = 2;
-                            firstDelay = (float)(random.NextDouble() * 725.0 + 1500.0);
-                        }
-                        break;
-                    case 2:
-                        firstDelay -= deltaTime;
-                        if (firstDelay > 0.0f)
-                        {
-                            programCounter = 2;
-                        }
-                        else
-                        {
-                            programCounter = 0;
-                        }
-                        break;
-                }
+                case 1:
+                    if(initForLoopVM < amount)
+                    {
+                    cylonRaiders.Add(new CylonRaider(cylonTexture, new Rectangle(random.Next(10, 1300), random.Next(25, 30), 50, 75)));
+                    initForLoopVM++;
+                    }
+                    else
+                    {
+                        programCounter = 2;
+                        firstDelay = (float)(random.NextDouble() * 725.0 + 1500.0);
+                    }
+                    break;
+                case 2:
+                    firstDelay -= deltaTime;
+                    if (firstDelay > 0.0f)
+                    {
+                        programCounter = 2;
+                    }
+                    else
+                    {
+                        programCounter = 3;
+                    }
+                    break;
+                case 3:
+                    if(cylonRaiders.Count > 25)
+                    {
+                        programCounter = 4;
+                        secondDelay = 10000.0f;
+                    }
+                    else
+                    {
+                        programCounter = 0;
+                    }
+                    break;
+                case 4:
+                    secondDelay -= deltaTime;
+                    if(secondDelay > 0.0f)
+                    {
+                        programCounter = 4;
+                    }
+                    else
+                    {
+                        programCounter = 3;
+                    }
+                    break;
+            }
             
             base.Update(gameTime);
         }
