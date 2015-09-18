@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 
 namespace ourGame {
 
@@ -15,10 +15,11 @@ namespace ourGame {
 
         private Texture2D background;
         private Texture2D projectileTexture;
+        private Texture2D cylonTexture;
 
-        List<Projectile> laserArray = new List<Projectile>();
-
-        CylonRaider[] cylonRaiders = new CylonRaider[45];
+        List<Projectile> laserList = new List<Projectile>();
+        List<CylonRaider> cylonRaiderList = new List<CylonRaider>();
+       
         private Projectile testBeam;
         private int shotsLeftInBurst = 4;
 
@@ -44,11 +45,14 @@ namespace ourGame {
             background = Content.Load<Texture2D>("background");
             ship = new Ship(Content.Load<Texture2D>("ViperMK2.1s"), Content.Load<Texture2D>("engineFlame"));
             projectileTexture = Content.Load<Texture2D>("projectile");
-            Texture2D cylonTexture = Content.Load<Texture2D>("CylonRaider");
-            for (int i = 0; i < 15; i++) {
-                cylonRaiders[i] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (25), 50, 75));
-                cylonRaiders[i + 15] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (125), 50, 75));
-                cylonRaiders[i + 30] = new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (225), 50, 75));
+            cylonTexture = Content.Load<Texture2D>("CylonRaider");
+
+            int muli = 0;
+            for (int j = 0; j < 3; j++) {
+                for (int i = 0; i < 15; i++) {
+                    cylonRaiderList.Add(new CylonRaider(cylonTexture, new Rectangle((i * 80 + 100), (25 + muli), 50, 75)));
+                }
+                muli += 100;
             }
 
         }
@@ -63,18 +67,57 @@ namespace ourGame {
             if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
 
+            //game update stuff
+            foreach (var laser in laserList) {
+                laser.Update();
+             }
+
+            foreach (CylonRaider raider in cylonRaiderList) {
+                raider.Update(ship.Position, cylonRaiderList);
+            }
+        
+            ship.Update(keyboardState);
+
+
+
+            var newRaiderList =
+              (from raider in cylonRaiderList
+               let raiderPos = new Vector2(raider.position.X, raider.position.Y)
+               let colliders =
+                  from laser in laserList
+                  where Vector2.Distance(raiderPos, laser.location) < 20.0f
+                  select raiderPos
+               where colliders.Count() == 0
+               select raider
+            ).ToList();
+
+            var newLaserList =
+              (from laser in laserList
+               let colliders =
+                  from raider in cylonRaiderList
+                  let raiderPos = new Vector2(raider.position.X, raider.position.Y)
+                  where Vector2.Distance(raiderPos, laser.location) < 20.0f
+                  select raiderPos
+               where colliders.Count() == 0
+               select laser
+            ).ToList();
+
             if (keyboardState.IsKeyDown(Keys.Space)) {
-                //TODO: add a new laser
                 TimeSpan interval = gameTime.TotalGameTime;
-                if (interval > lastShot + new TimeSpan(0, 0, 0, 0, 100 )) {
+                if (interval > lastShot + new TimeSpan(0, 0, 0, 0, 100)) {
                     if (shotsLeftInBurst-- > 0) {
-                        int laser1y = ship.getY() - (int)(Math.Sin((double)ship.getHeading()) * 10);
-                        int laser2y = ship.getY() + (int)(Math.Sin((double)ship.getHeading()) * 10);
+                        //calculate the location of the lazors
                         int laser1x = ship.getX() - (int)(Math.Cos((double)ship.getHeading()) * 10);
+                        int laser1y = ship.getY() - (int)(Math.Sin((double)ship.getHeading()) * 10);
+
                         int laser2x = ship.getX() + (int)(Math.Cos((double)ship.getHeading()) * 10);
+                        int laser2y = ship.getY() + (int)(Math.Sin((double)ship.getHeading()) * 10);
+
                         Console.WriteLine("Lazor 1 y:{0}\nLazor 2 y:{1}", laser1y, laser2y);
-                        laserArray.Add(new Projectile(new Vector2(laser1x, laser1y), projectileTexture, ship.getHeading(), ship.getProjectileSpeed()));
-                        laserArray.Add(new Projectile(new Vector2(laser2x, laser2y), projectileTexture, ship.getHeading(), ship.getProjectileSpeed()));
+
+                        newLaserList.Add(new Projectile(new Vector2(laser1x, laser1y), projectileTexture, ship.getHeading(), ship.getProjectileSpeed()));
+                        newLaserList.Add(new Projectile(new Vector2(laser2x, laser2y), projectileTexture, ship.getHeading(), ship.getProjectileSpeed()));
+
                         lastShot = interval;
                         lastBurst = interval;
                     }
@@ -85,16 +128,8 @@ namespace ourGame {
                 }
             }
 
-            //game update stuff
-            foreach (var laser in laserArray) {
-                laser.Update();
-             }
-
-            foreach (CylonRaider raider in cylonRaiders) {
-                raider.Update(ship.Position);
-            }
-
-            ship.Update(keyboardState);
+            laserList = newLaserList;
+            cylonRaiderList = newRaiderList;
 
             base.Update(gameTime);
         }
@@ -106,13 +141,16 @@ namespace ourGame {
             spriteBatch.Begin();
             spriteBatch.Draw(background, new Vector2(-200,-200), Color.White);
 
-            for (int i = 0; i < 45; i++) {
-                cylonRaiders[i].Draw(spriteBatch);
+            //draw raiders
+            foreach (CylonRaider raider in cylonRaiderList) {
+                raider.Draw(spriteBatch);
             }
+
+            //draw ship
             ship.Draw(spriteBatch);
 
             //draw laser beams
-            foreach (var laser in laserArray) {
+            foreach (var laser in laserList) {
                 laser.Draw(spriteBatch);
             }
 
