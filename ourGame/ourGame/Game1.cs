@@ -13,23 +13,26 @@ namespace ourGame {
         SpriteBatch spriteBatch;
         Ship ship;
 
+        private Texture2D cylonTexture;
         private Texture2D background;
         private Texture2D projectileTexture;
-        private Texture2D cylonTexture;
 
         List<Projectile> laserList = new List<Projectile>();
         List<CylonRaider> cylonRaiderList = new List<CylonRaider>();
        
-        private Projectile testBeam;
         private int shotsLeftInBurst = 4;
 
         private TimeSpan lastBurst;
         private TimeSpan lastShot;
 
+        private int programCounter = 0;
+        private int initForLoopVM, amount;
+        private float firstDelay, secondDelay;
+        private Random random = new Random();
+
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-
             graphics.PreferredBackBufferWidth = 1366;
             graphics.PreferredBackBufferHeight = 768;
             graphics.ApplyChanges();
@@ -54,7 +57,6 @@ namespace ourGame {
                 }
                 muli += 100;
             }
-
         }
 
         protected override void UnloadContent() {
@@ -63,6 +65,7 @@ namespace ourGame {
         protected override void Update(GameTime gameTime) {
 
             KeyboardState keyboardState = Keyboard.GetState();
+            float deltaTime = (float)gameTime.TotalGameTime.TotalSeconds;
 
             if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
@@ -70,10 +73,13 @@ namespace ourGame {
             //game update stuff
             foreach (var laser in laserList) {
                 laser.Update();
-             }
+            }
 
-            foreach (CylonRaider raider in cylonRaiderList) {
-                raider.Update(ship.Position, cylonRaiderList);
+            ship.Update(keyboardState);
+
+    
+            foreach (CylonRaider raider in cylonRaiderList){
+                raider.Update(ship.Position);
             }
         
             ship.Update(keyboardState);
@@ -131,12 +137,57 @@ namespace ourGame {
             laserList = newLaserList;
             cylonRaiderList = newRaiderList;
 
+
+            //This block should always come last!
+            switch (programCounter)
+            {
+                case 0:
+                    if (true){
+                        programCounter = 1;
+                        initForLoopVM = 0;
+                        amount = random.Next(3, 9);
+                    }
+                    break;
+
+                case 1:
+                    if(initForLoopVM < amount){
+                        cylonRaiderList.Add(new CylonRaider(cylonTexture, new Rectangle(random.Next(10, 1300), random.Next(25, 30), 50, 75)));
+                        initForLoopVM++;
+                    }else {
+                        programCounter = 2;
+                        firstDelay = (float)(random.NextDouble() * 725.0 + 1500.0);
+                    }
+                    break;
+                case 2:
+                    firstDelay -= deltaTime;
+                    if (firstDelay > 0.0f){
+                        programCounter = 2;
+                    } else{
+                        programCounter = 3;
+                    }
+                    break;
+                case 3:
+                    if(cylonRaiderList.Count > 25){
+                        programCounter = 4;
+                        secondDelay = 10000.0f;
+                    } else {
+                        programCounter = 0;
+                    }
+                    break;
+                case 4:
+                    secondDelay -= deltaTime;
+                    if(secondDelay > 0.0f) {
+                        programCounter = 4;
+                    } else {
+                        programCounter = 3;
+                    }
+                    break;
+            }
+            
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime) {
-
-            GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
             spriteBatch.Draw(background, new Vector2(-200,-200), Color.White);
@@ -153,7 +204,6 @@ namespace ourGame {
             foreach (var laser in laserList) {
                 laser.Draw(spriteBatch);
             }
-
 
             spriteBatch.End();
 

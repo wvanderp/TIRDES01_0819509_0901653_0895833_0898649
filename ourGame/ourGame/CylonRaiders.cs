@@ -28,7 +28,7 @@ namespace ourGame {
             y = (float)position.Y;
         }
 
-        public void Update(Rectangle targetBounds, List<CylonRaider> raiderList) {
+        public void Update(Rectangle targetBounds) {
             x += ((float)Math.Cos((double)heading) * speed);
             y += ((float)Math.Sin((double)heading) * speed);
 
