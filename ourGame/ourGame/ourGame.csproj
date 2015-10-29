@@ -40,7 +40,12 @@
   <ItemGroup>
     <Compile Include="CylonRaiders.cs" />
 <<<<<<< HEAD
+<<<<<<< HEAD
     <Compile Include="Entity.cs" />
+=======
+    <Compile Include="IGameInput.cs" />
+    <Compile Include="KeyboardInputController.cs" />
+>>>>>>> 9dc7ebc... Added inputcontror
 =======
     <Compile Include="IGameInput.cs" />
     <Compile Include="KeyboardInputController.cs" />
