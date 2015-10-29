@@ -5,11 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ourGame
-{
+namespace ourGame {
 
-    public class Game1 : Game
-    {
+    public class Game1 : Game {
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -31,8 +29,7 @@ namespace ourGame
         private float firstDelay, secondDelay;
         private Random random = new Random();
 
-        public Game1()
-        {
+        public Game1() {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             graphics.PreferredBackBufferWidth = 1366;
@@ -40,14 +37,12 @@ namespace ourGame
             graphics.ApplyChanges();
         }
 
-        protected override void Initialize()
-        {
+        protected override void Initialize() {
 
             base.Initialize();
         }
 
-        protected override void LoadContent()
-        {
+        protected override void LoadContent() {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             background = Content.Load<Texture2D>("background");
             ship = new Entity(new Vector2(400.0f, 300.0f), Content.Load<Texture2D>("ViperMK2.1s"), 0.0f, 25.0f);
@@ -55,22 +50,18 @@ namespace ourGame
             cylonTexture = Content.Load<Texture2D>("CylonRaider");
 
             int mul = 0;
-            for (int j = 0; j < 3; j++)
-            {
-                for (int i = 0; i < 15; i++)
-                {
+            for (int j = 0; j < 3; j++) {
+                for (int i = 0; i < 15; i++) {
                     cylonRaiders.Add(new Entity(new Vector2(350.0f * mul, 400.0f * mul), cylonTexture, 0.0f, 10.0f));
                 }
                 mul += 100;
             }
         }
 
-        protected override void UnloadContent()
-        {
+        protected override void UnloadContent() {
         }
 
-        protected override void Update(GameTime gameTime)
-        {
+        protected override void Update(GameTime gameTime) {
 
             KeyboardState keyboardState = Keyboard.GetState();
             float deltaTime = (float)gameTime.TotalGameTime.TotalSeconds;
@@ -79,13 +70,11 @@ namespace ourGame
                 Exit();
 
             //game update stuff
-            foreach (var laser in lasers)
-            {
+            foreach (var laser in lasers) {
                 laser.CreateNext(new Vector2(laser.X - laser.Speed, laser.Y - laser.Speed), laser.H);
             }
 
-            foreach (Entity raider in cylonRaiders)
-            {
+            foreach (Entity raider in cylonRaiders) {
                 raider.CreateNext(new Vector2(raider.X - ship.X, raider.Y - ship.Y), ship.H);
             }
 
@@ -113,13 +102,10 @@ namespace ourGame
                select laser
             ).ToList();
 
-            if (keyboardState.IsKeyDown(Keys.Space))
-            {
+            if (keyboardState.IsKeyDown(Keys.Space)) {
                 TimeSpan interval = gameTime.TotalGameTime;
-                if (interval > lastShot + new TimeSpan(0, 0, 0, 0, 100))
-                {
-                    if (shotsLeftInBurst-- > 0)
-                    {
+                if (interval > lastShot + new TimeSpan(0, 0, 0, 0, 100)) {
+                    if (shotsLeftInBurst-- > 0) {
                         //calculate the location of the projectiles
                         int projectile1x = (int)(ship.X - Math.Cos(ship.H) * 10);
                         int projectile1y = (int)(ship.Y - Math.Sin(ship.H) * 10);
@@ -134,8 +120,7 @@ namespace ourGame
                         lastBurst = interval;
                     }
                 }
-                if (interval > lastBurst + new TimeSpan(0, 0, 1))
-                {
+                if (interval > lastBurst + new TimeSpan(0, 0, 1)) {
                     shotsLeftInBurst = 4;
                     lastBurst = interval;
                 }
@@ -146,11 +131,9 @@ namespace ourGame
 
 
             //This block should always come last!
-            switch (programCounter)
-            {
+            switch (programCounter) {
                 case 0:
-                    if (true)
-                    {
+                    if (true) {
                         programCounter = 1;
                         initForLoopVM = 0;
                         amount = random.Next(3, 9);
@@ -158,47 +141,39 @@ namespace ourGame
                     break;
 
                 case 1:
-                    if (initForLoopVM < amount)
-                    {
+                    if (initForLoopVM < amount) {
                         cylonRaiders.Add(new Entity(new Vector2(100.0f, 100.0f), cylonTexture, 0.0f, 10.0f));
                         initForLoopVM++;
                     }
-                    else
-                    {
+                    else {
                         programCounter = 2;
                         firstDelay = (float)(random.NextDouble() * 725.0 + 1500.0);
                     }
                     break;
                 case 2:
                     firstDelay -= deltaTime;
-                    if (firstDelay > 0.0f)
-                    {
+                    if (firstDelay > 0.0f) {
                         programCounter = 2;
                     }
-                    else
-                    {
+                    else {
                         programCounter = 3;
                     }
                     break;
                 case 3:
-                    if (cylonRaiders.Count > 25)
-                    {
+                    if (cylonRaiders.Count > 25) {
                         programCounter = 4;
                         secondDelay = 10000.0f;
                     }
-                    else
-                    {
+                    else {
                         programCounter = 0;
                     }
                     break;
                 case 4:
                     secondDelay -= deltaTime;
-                    if (secondDelay > 0.0f)
-                    {
+                    if (secondDelay > 0.0f) {
                         programCounter = 4;
                     }
-                    else
-                    {
+                    else {
                         programCounter = 3;
                     }
                     break;
@@ -207,15 +182,13 @@ namespace ourGame
             base.Update(gameTime);
         }
 
-        protected override void Draw(GameTime gameTime)
-        {
+        protected override void Draw(GameTime gameTime) {
 
             spriteBatch.Begin();
             spriteBatch.Draw(background, new Vector2(-200, -200), Color.White);
 
             //draw raiders
-            foreach (Entity raider in cylonRaiders)
-            {
+            foreach (Entity raider in cylonRaiders) {
                 spriteBatch.Draw(raider.Appearance, new Vector2(raider.X, raider.Y), Color.White);
             }
 
@@ -223,8 +196,7 @@ namespace ourGame
             spriteBatch.Draw(ship.Appearance, new Vector2(ship.X, ship.Y), Color.White);
 
             //draw laser beams
-            foreach (var laser in lasers)
-            {
+            foreach (var laser in lasers) {
                 spriteBatch.Draw(laser.Appearance, new Vector2(laser.X, laser.Y), Color.White);
             }
 
