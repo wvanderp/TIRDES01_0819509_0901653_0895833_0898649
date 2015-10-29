@@ -58,7 +58,8 @@ struct Entity {
         return new Entity() {
             Position = this.Position + deltaPosition,
             Appearance = this.Appearance,
-            Heading = this.Heading + deltaHeading
+            Heading = this.Heading + deltaHeading,
+            Speed = this.Speed
         };
     }
 }

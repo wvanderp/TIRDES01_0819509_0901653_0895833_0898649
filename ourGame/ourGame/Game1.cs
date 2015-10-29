@@ -15,6 +15,8 @@ namespace ourGame {
         private Texture2D cylonTexture;
         private Texture2D background;
         private Texture2D projectileTexture;
+        IGameInput input;
+
 
         List<Entity> lasers = new List<Entity>();
         List<Entity> cylonRaiders = new List<Entity>();
@@ -45,9 +47,11 @@ namespace ourGame {
         protected override void LoadContent() {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             background = Content.Load<Texture2D>("background");
-            ship = new Entity(new Vector2(400.0f, 300.0f), Content.Load<Texture2D>("ViperMK2.1s"), 0.0f, 25.0f);
+            ship = new Entity(new Vector2(400.0f, 300.0f), Content.Load<Texture2D>("ViperMK2.1s"), 0.0f, 0.0f);
             projectileTexture = Content.Load<Texture2D>("projectile");
             cylonTexture = Content.Load<Texture2D>("CylonRaider");
+            input = new KeyboardInputController();
+
 
             int mul = 0;
             for (int j = 0; j < 3; j++) {
@@ -62,7 +66,7 @@ namespace ourGame {
         }
 
         protected override void Update(GameTime gameTime) {
-
+            input.Update();
             KeyboardState keyboardState = Keyboard.GetState();
             float deltaTime = (float)gameTime.TotalGameTime.TotalSeconds;
 
@@ -78,9 +82,10 @@ namespace ourGame {
                 raider.CreateNext(new Vector2(raider.X - ship.X, raider.Y - ship.Y), ship.H);
             }
 
+            
             ship.CreateNext(new Vector2(ship.X + ship.S, ship.Y + ship.S), ship.H);
 
-            var newRaiderList =
+            var untouchedRaiders =
               (from raider in cylonRaiders
                let raiderPos = new Vector2(raider.X, raider.Y)
                let colliders =
@@ -91,7 +96,7 @@ namespace ourGame {
                select raider
             ).ToList();
 
-            var newlasers =
+            var untouchedLasers =
               (from laser in lasers
                let colliders =
                   from raider in cylonRaiders
@@ -101,20 +106,75 @@ namespace ourGame {
                where colliders.Count() == 0
                select laser
             ).ToList();
+            lasers = untouchedLasers;
+            cylonRaiders = untouchedRaiders;
 
-            if (keyboardState.IsKeyDown(Keys.Space)) {
+            #region shipUpdate
+            float shipheading = ship.Heading;
+            float shipSpeed = ship.Speed;
+            if(input.CurrentRotationState == RotationState.CCW) {
+                Console.WriteLine("BLA!");
+            }
+            if (input.CurrentRotationState == RotationState.CW)
+                shipheading += MathHelper.Pi / 60;
+            if (input.CurrentRotationState == RotationState.CCW)
+                shipheading -= MathHelper.Pi / 60;
+
+            if(input.ShouldIncreaseSpeed) {
+                shipSpeed += .1f;
+            }
+            if(input.ShouldDecreaseSpeed) {
+                shipSpeed -= .1f;
+            }
+            float deltaX = (float)System.Math.Sin((double)shipheading) * shipSpeed;
+            float deltaY = (float)System.Math.Cos((double)shipheading) * shipSpeed * -1;
+            Vector2 shipPosition = new Vector2(ship.X, ship.Y);
+            shipPosition.X += deltaX;
+            shipPosition.Y += deltaY;
+            ship = new Entity(shipPosition, ship.Appearance, shipheading, shipSpeed);
+            #endregion
+
+            #region projectileUpdate
+            List<Entity> newlasers = new List<Entity>();
+            foreach(Entity laser in lasers) {
+                Vector2 laserPositionDeltas = Vector2.Zero;
+                laserPositionDeltas.X += (float)System.Math.Sin((double)laser.Heading) * laser.Speed;
+                laserPositionDeltas.Y += (float)System.Math.Cos((double)laser.Heading) * laser.Speed * -1;
+                newlasers.Add(laser.CreateNext(laserPositionDeltas, 0.0f));
+            };
+            #endregion
+
+            #region cylonUpdate
+            List<Entity> newCylonRaiders = new List<Entity>();
+            foreach (Entity cylonRaider in cylonRaiders) {
+                Vector2 cylonPosition = cylonRaider.Position;
+                cylonPosition.X += ((float)Math.Cos((double)cylonRaider.Heading) * cylonRaider.Speed);
+                cylonPosition.Y += ((float)Math.Sin((double)cylonRaider.Heading) * cylonRaider.Speed);
+
+                float targetX = ship.X - cylonPosition.X;
+                float targetY = ship.Y - cylonPosition.Y;
+
+                Vector2 target = new Vector2(targetX, targetY);
+
+                float heading = (float)Math.Atan2((double)target.Y, (double)target.X);
+                float speed = target.Length() / 120;
+                newCylonRaiders.Add(new Entity(cylonPosition, cylonRaider.Appearance, heading, speed));
+            }
+            
+            #endregion
+
+            if (input.TriggerPressed) {
                 TimeSpan interval = gameTime.TotalGameTime;
                 if (interval > lastShot + new TimeSpan(0, 0, 0, 0, 100)) {
                     if (shotsLeftInBurst-- > 0) {
-                        //calculate the location of the projectiles
                         int projectile1x = (int)(ship.X - Math.Cos(ship.H) * 10);
                         int projectile1y = (int)(ship.Y - Math.Sin(ship.H) * 10);
 
                         int projectile2x = (int)(ship.X + Math.Cos(ship.H) * 10);
                         int projectile2y = (int)(ship.Y + Math.Sin(ship.H) * 10);
 
-                        newlasers.Add(new Entity(new Vector2(projectile1x, projectile1y), projectileTexture, ship.H, ship.S));
-                        newlasers.Add(new Entity(new Vector2(projectile2x, projectile2y), projectileTexture, ship.H, ship.S));
+                        newlasers.Add(new Entity(new Vector2(projectile1x, projectile1y), projectileTexture, ship.H, ship.S  + 3f));
+                        newlasers.Add(new Entity(new Vector2(projectile2x, projectile2y), projectileTexture, ship.H, ship.S + 3f));
 
                         lastShot = interval;
                         lastBurst = interval;
@@ -126,8 +186,12 @@ namespace ourGame {
                 }
             }
 
+
+
             lasers = newlasers;
-            cylonRaiders = newRaiderList;
+
+            cylonRaiders = newCylonRaiders;
+
 
 
             //This block should always come last!
@@ -189,15 +253,15 @@ namespace ourGame {
 
             //draw raiders
             foreach (Entity raider in cylonRaiders) {
-                spriteBatch.Draw(raider.Appearance, new Vector2(raider.X, raider.Y), Color.White);
+                spriteBatch.Draw(raider.Appearance, raider.Position, null, Color.White, (float)((double)raider.Heading - (Math.PI / 2)), new Vector2(raider.Appearance.Width / 2, raider.Appearance.Height / 2), 1.0f, SpriteEffects.None, 0.0f); 
             }
 
             //draw ship
-            spriteBatch.Draw(ship.Appearance, new Vector2(ship.X, ship.Y), Color.White);
-
+            spriteBatch.Draw(ship.Appearance, new Vector2(ship.X, ship.Y), null, Color.White, ship.Heading, new Vector2(ship.Appearance.Width / 2, ship.Appearance.Height / 2), 1.0f, SpriteEffects.None,0.0f);
+            Console.WriteLine("Heading:{0}", ship.Heading);
             //draw laser beams
             foreach (var laser in lasers) {
-                spriteBatch.Draw(laser.Appearance, new Vector2(laser.X, laser.Y), Color.White);
+                spriteBatch.Draw(laser.Appearance, new Vector2(laser.X, laser.Y), null, Color.White, laser.Heading, new Vector2(laser.Appearance.Width / 2, laser.Appearance.Height / 2), 1.0f, SpriteEffects.None, 0.0f);
             }
 
             spriteBatch.End();

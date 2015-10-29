@@ -17,7 +17,7 @@ namespace ourGame
         }
 
         public RotationState CurrentRotationState { get {
-            if (state.IsKeyDown(Keys.A) && state.IsKeyDown(Keys.S)) {
+            if (state.IsKeyDown(Keys.A) && state.IsKeyDown(Keys.D)) {
                 return RotationState.NONE;
             }
             else {
