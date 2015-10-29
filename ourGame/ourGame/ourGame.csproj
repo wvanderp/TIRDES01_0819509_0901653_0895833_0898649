@@ -40,6 +40,8 @@
   <ItemGroup>
     <Compile Include="CylonRaiders.cs" />
     <Compile Include="Entity.cs" />
+    <Compile Include="IGameInput.cs" />
+    <Compile Include="KeyboardInputController.cs" />
     <Compile Include="Projectile.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
