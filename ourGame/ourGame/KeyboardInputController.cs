@@ -41,5 +41,10 @@ namespace ourGame
             get { return state.IsKeyDown(Keys.S); }
         }
 
+        public Boolean TriggerPressed {
+            get {
+                return state.IsKeyDown(Keys.Space);
+            }
+        }
     }
 }

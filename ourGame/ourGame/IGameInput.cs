@@ -15,9 +15,9 @@ namespace ourGame
     interface IGameInput
     {
         RotationState CurrentRotationState { get; }
-        Boolean ShouldIncreaseSpeed { get;  }
-
+        Boolean ShouldIncreaseSpeed { get; }
         Boolean ShouldDecreaseSpeed { get; }
+        Boolean TriggerPressed { get; }
 
         void Update();
     }
