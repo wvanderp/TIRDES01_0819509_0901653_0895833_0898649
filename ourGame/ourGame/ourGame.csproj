@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{38A46D35-A0D6-4F7D-B126-8AFB2990C146}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -38,16 +36,20 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="CylonRaiders.cs" />
     <Compile Include="Entity.cs" />
-    <Compile Include="Projectile.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Ship.cs" />
     <Compile Include="GameInput.cs" />
     <Compile Include="WASDKeyboardInputController.cs" />
     <Compile Include="CursorKeyboardInputController.cs" />
+    <Compile Include="Instruction.cs" />
+    <Compile Include="Instructions\CreateCylon.cs" />
+    <Compile Include="Instructions\For.cs" />
+    <Compile Include="Instructions\Repeat.cs" />
+    <Compile Include="Instructions\Semicolon.cs" />
+    <Compile Include="Instructions\Wait.cs" />
+
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
