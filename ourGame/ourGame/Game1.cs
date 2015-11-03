@@ -4,9 +4,16 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ourGame.Instructions;
 
 namespace ourGame {
-
+    enum InstructionResult
+    {
+        Done,
+        DoneAndCreateCylon,
+        Running,
+        RunningAndCreateCylon
+    }
     public class Game1 : Game {
 
         GraphicsDeviceManager graphics;
@@ -29,7 +36,7 @@ namespace ourGame {
         private int programCounter = 0;
         private int initForLoopVM, amount;
         private float firstDelay, secondDelay;
-        private Random random = new Random();
+        private static Random rnd = new Random();
 
         public Game1() {
             graphics = new GraphicsDeviceManager(this);
@@ -38,6 +45,17 @@ namespace ourGame {
             graphics.PreferredBackBufferHeight = 768;
             graphics.ApplyChanges();
         }
+
+        Instruction gameLogic =
+        new Repeat(
+          new For(0, 10, i =>
+                new Wait(() => i * 0.1f) +
+                new CreateCylon()) +
+          new Wait(() => rnd.Next(1, 5)) +
+          new For(0, 10, i =>
+                new Wait(() => (float)rnd.NextDouble() * 1.0f + 0.2f) +
+                new CreateCylon()) +
+          new Wait(() => rnd.Next(2, 3)));
 
         protected override void Initialize() {
 
@@ -113,7 +131,6 @@ namespace ourGame {
             float shipheading = ship.Heading;
             float shipSpeed = ship.Speed;
             if(input.CurrentRotationState == RotationState.CCW) {
-                Console.WriteLine("BLA!");
             }
             if (input.CurrentRotationState == RotationState.CW)
                 shipheading += MathHelper.Pi / 60;
@@ -186,62 +203,24 @@ namespace ourGame {
                 }
             }
 
-
+            switch (gameLogic.Execute(deltaTime))
+            {
+                case InstructionResult.DoneAndCreateCylon:
+                    cylonRaiders.Add(new Entity(new Vector2(100.0f, 100.0f), cylonTexture, 0.0f, 10.0f));
+                    break;
+                case InstructionResult.RunningAndCreateCylon:
+                    cylonRaiders.Add(new Entity(new Vector2(100.0f, 100.0f), cylonTexture, 0.0f, 10.0f));
+                    break;
+            }
 
             lasers = newlasers;
-
             cylonRaiders = newCylonRaiders;
 
 
 
             //This block should always come last!
-            switch (programCounter) {
-                case 0:
-                    if (true) {
-                        programCounter = 1;
-                        initForLoopVM = 0;
-                        amount = random.Next(3, 9);
-                    }
-                    break;
 
-                case 1:
-                    if (initForLoopVM < amount) {
-                        cylonRaiders.Add(new Entity(new Vector2(100.0f, 100.0f), cylonTexture, 0.0f, 10.0f));
-                        initForLoopVM++;
-                    }
-                    else {
-                        programCounter = 2;
-                        firstDelay = (float)(random.NextDouble() * 725.0 + 1500.0);
-                    }
-                    break;
-                case 2:
-                    firstDelay -= deltaTime;
-                    if (firstDelay > 0.0f) {
-                        programCounter = 2;
-                    }
-                    else {
-                        programCounter = 3;
-                    }
-                    break;
-                case 3:
-                    if (cylonRaiders.Count > 25) {
-                        programCounter = 4;
-                        secondDelay = 10000.0f;
-                    }
-                    else {
-                        programCounter = 0;
-                    }
-                    break;
-                case 4:
-                    secondDelay -= deltaTime;
-                    if (secondDelay > 0.0f) {
-                        programCounter = 4;
-                    }
-                    else {
-                        programCounter = 3;
-                    }
-                    break;
-            }
+            
 
             base.Update(gameTime);
         }
@@ -258,7 +237,6 @@ namespace ourGame {
 
             //draw ship
             spriteBatch.Draw(ship.Appearance, new Vector2(ship.X, ship.Y), null, Color.White, ship.Heading, new Vector2(ship.Appearance.Width / 2, ship.Appearance.Height / 2), 1.0f, SpriteEffects.None,0.0f);
-            Console.WriteLine("Heading:{0}", ship.Heading);
             //draw laser beams
             foreach (var laser in lasers) {
                 spriteBatch.Draw(laser.Appearance, new Vector2(laser.X, laser.Y), null, Color.White, laser.Heading, new Vector2(laser.Appearance.Width / 2, laser.Appearance.Height / 2), 1.0f, SpriteEffects.None, 0.0f);

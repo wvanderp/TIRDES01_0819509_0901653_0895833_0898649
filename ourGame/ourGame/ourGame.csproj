@@ -38,15 +38,18 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="CylonRaiders.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="IGameInput.cs" />
+    <Compile Include="Instruction.cs" />
+    <Compile Include="Instructions\CreateCylon.cs" />
+    <Compile Include="Instructions\For.cs" />
+    <Compile Include="Instructions\Repeat.cs" />
+    <Compile Include="Instructions\Semicolon.cs" />
+    <Compile Include="Instructions\Wait.cs" />
     <Compile Include="KeyboardInputController.cs" />
-    <Compile Include="Projectile.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Ship.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
