@@ -15,7 +15,7 @@ namespace ourGame {
         private Texture2D cylonTexture;
         private Texture2D background;
         private Texture2D projectileTexture;
-        IGameInput input;
+        GameInput input;
 
 
         List<Entity> lasers = new List<Entity>();
@@ -50,8 +50,8 @@ namespace ourGame {
             ship = new Entity(new Vector2(400.0f, 300.0f), Content.Load<Texture2D>("ViperMK2.1s"), 0.0f, 0.0f);
             projectileTexture = Content.Load<Texture2D>("projectile");
             cylonTexture = Content.Load<Texture2D>("CylonRaider");
-            input = new KeyboardInputController();
-
+            input = new WASDKeyboardInputController();
+			input += new CursorKeyboardInputController ();
 
             int mul = 0;
             for (int j = 0; j < 3; j++) {
