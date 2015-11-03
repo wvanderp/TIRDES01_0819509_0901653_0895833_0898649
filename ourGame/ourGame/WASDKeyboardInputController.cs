@@ -6,17 +6,17 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ourGame
 {
-    class KeyboardInputController : IGameInput
+    class WASDKeyboardInputController : GameInput
     {
         KeyboardState state;
 
-        public void Update()
+        override public void Update()
         {
             state = Keyboard.GetState();
 
         }
 
-        public RotationState CurrentRotationState { get {
+		override public RotationState CurrentRotationState { get {
             if (state.IsKeyDown(Keys.A) && state.IsKeyDown(Keys.D)) {
                 return RotationState.NONE;
             }
@@ -31,17 +31,17 @@ namespace ourGame
             return RotationState.NONE;
         } }
 
-        public Boolean ShouldIncreaseSpeed
+		override public Boolean ShouldIncreaseSpeed
         {
             get { return state.IsKeyDown(Keys.W); }
         }
 
-        public Boolean ShouldDecreaseSpeed
+		override public Boolean ShouldDecreaseSpeed
         {
             get { return state.IsKeyDown(Keys.S); }
         }
 
-        public Boolean TriggerPressed {
+		override public Boolean TriggerPressed {
             get {
                 return state.IsKeyDown(Keys.Space);
             }
