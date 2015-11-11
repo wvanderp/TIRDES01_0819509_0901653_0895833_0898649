@@ -15,4 +15,14 @@ namespace ourGame
       return new Instructions.Semicolon(A, B);
     }
   }
+
+    class nop : Instruction {
+        public override InstructionResult Execute(float dt) {
+            return InstructionResult.Done;
+        }
+
+        public override Instruction Reset() {
+            return new nop();
+        }
+    }
 }

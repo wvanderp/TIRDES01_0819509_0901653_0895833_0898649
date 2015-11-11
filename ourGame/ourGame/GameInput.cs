@@ -76,4 +76,34 @@ namespace ourGame
 			return new SumInputController (a, b);
 		}
     }
+
+    public class NullInputController : GameInput {
+        public override RotationState CurrentRotationState {
+            get {
+                return RotationState.NONE;
+            }
+        }
+
+        public override bool ShouldDecreaseSpeed {
+            get {
+                return false;
+            }
+        }
+
+        public override bool ShouldIncreaseSpeed {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override bool TriggerPressed {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Update() {
+            throw new NotImplementedException();
+        }
+    }
 }

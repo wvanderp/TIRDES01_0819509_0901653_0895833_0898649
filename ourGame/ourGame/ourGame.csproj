@@ -36,6 +36,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Weapon.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />
@@ -49,9 +50,8 @@
     <Compile Include="Instructions\Repeat.cs" />
     <Compile Include="Instructions\Semicolon.cs" />
     <Compile Include="Instructions\Wait.cs" />
-
   </ItemGroup>
-   <ItemGroup>
+  <ItemGroup>
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MSBuildProgramFiles32)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
     </Reference>

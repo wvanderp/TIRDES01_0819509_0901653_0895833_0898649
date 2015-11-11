@@ -7,35 +7,33 @@ using System.Linq;
 using ourGame.Instructions;
 
 namespace ourGame {
-    enum InstructionResult
-    {
+    enum InstructionResult{
         Done,
         DoneAndCreateCylon,
         Running,
         RunningAndCreateCylon
     }
+
     public class Game1 : Game {
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        private Entity ship;
+
         private Texture2D cylonTexture;
         private Texture2D background;
         private Texture2D projectileTexture;
         GameInput input;
 
-
+        private Entity ship;
         List<Entity> lasers = new List<Entity>();
         List<Entity> cylonRaiders = new List<Entity>();
 
-        private int shotsLeftInBurst = 4;
-
-        private TimeSpan lastBurst;
-        private TimeSpan lastShot;
+        Weapon<Entity> currentWeapon;
 
         private int programCounter = 0;
         private int initForLoopVM, amount;
         private float firstDelay, secondDelay;
+
         private static Random rnd = new Random();
 
         public Game1() {
@@ -64,10 +62,13 @@ namespace ourGame {
 
         protected override void LoadContent() {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
             background = Content.Load<Texture2D>("background");
-            ship = new Entity(new Vector2(400.0f, 300.0f), Content.Load<Texture2D>("ViperMK2.1s"), 0.0f, 0.0f);
             projectileTexture = Content.Load<Texture2D>("projectile");
             cylonTexture = Content.Load<Texture2D>("CylonRaider");
+
+            ship = new Entity(new Vector2(400.0f, 300.0f), Content.Load<Texture2D>("ViperMK2.1s"), 0.0f, 0.0f);
+            
             input = new WASDKeyboardInputController();
 			input += new CursorKeyboardInputController ();
 
@@ -78,6 +79,8 @@ namespace ourGame {
                 }
                 mul += 100;
             }
+
+            currentWeapon = new Blaster(projectileTexture);
         }
 
         protected override void UnloadContent() {
@@ -177,32 +180,16 @@ namespace ourGame {
                 float speed = target.Length() / 120;
                 newCylonRaiders.Add(new Entity(cylonPosition, cylonRaider.Appearance, heading, speed));
             }
-            
+
             #endregion
 
+            #region shoot Bullets
             if (input.TriggerPressed) {
-                TimeSpan interval = gameTime.TotalGameTime;
-                if (interval > lastShot + new TimeSpan(0, 0, 0, 0, 100)) {
-                    if (shotsLeftInBurst-- > 0) {
-                        int projectile1x = (int)(ship.X - Math.Cos(ship.H) * 10);
-                        int projectile1y = (int)(ship.Y - Math.Sin(ship.H) * 10);
-
-                        int projectile2x = (int)(ship.X + Math.Cos(ship.H) * 10);
-                        int projectile2y = (int)(ship.Y + Math.Sin(ship.H) * 10);
-
-                        newlasers.Add(new Entity(new Vector2(projectile1x, projectile1y), projectileTexture, ship.H, ship.S  + 3f));
-                        newlasers.Add(new Entity(new Vector2(projectile2x, projectile2y), projectileTexture, ship.H, ship.S + 3f));
-
-                        lastShot = interval;
-                        lastBurst = interval;
-                    }
-                }
-                if (interval > lastBurst + new TimeSpan(0, 0, 1)) {
-                    shotsLeftInBurst = 4;
-                    lastBurst = interval;
-                }
+                currentWeapon.pullTrigger();
             }
+            #endregion
 
+            #region statagie decorater
             switch (gameLogic.Execute(deltaTime))
             {
                 case InstructionResult.DoneAndCreateCylon:
@@ -212,15 +199,12 @@ namespace ourGame {
                     cylonRaiders.Add(new Entity(new Vector2(100.0f, 100.0f), cylonTexture, 0.0f, 10.0f));
                     break;
             }
+            #endregion
 
+            #region updateVars
             lasers = newlasers;
             cylonRaiders = newCylonRaiders;
-
-
-
-            //This block should always come last!
-
-            
+            #endregion
 
             base.Update(gameTime);
         }
